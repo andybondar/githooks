@@ -32,10 +32,6 @@ do
  ## Check changed files
  KEY=$(git diff --cached --name-only -z $against | xargs -0 cat | grep -c -E ${regexp_list[$i]})
 
- #KEY_ID=$(cat /home/abondar/projects/telstra/git/15062016/secure/scripts/README | grep -c -E '[A-Z0-9]{20}')
- #KEY=$(cat /home/abondar/projects/telstra/git/15062016/secure/scripts/README | grep -c -E ${regexp_list[$i]})
- #echo "$i :  ${regexp_list[$i]}"
- #echo "key :  $KEY"
  if [ $KEY -ne 0 ]; then
   echo "Found patterns for ${i}"
   echo "Please check your code"
