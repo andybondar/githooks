@@ -3,6 +3,8 @@
 rules_list="./regex_rules.list"
 # Path to code you're gonna revise
 #rootdir = "./joomla-cms"
+rootdir = "../../deployment-configuration"
+#rootdir = "../../test"
 
 import re
 import os

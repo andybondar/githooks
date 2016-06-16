@@ -2,17 +2,6 @@
 
 #set -x
  
-if git rev-parse --verify HEAD >/dev/null 2>&1
-then
-    against=HEAD
-else
-    # Initial commit: diff against an empty tree object
-    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
-fi
-
-# Counter for vulnerabilities
-vulnerabilities=0
-
 # Declare associative array containing regular expressions (it's going to be expanded in future)
 declare -A regexp_list
 regexp_list[AWS_Access_Key]='(.*[a|A]ws.*|.*AWS.*|.*[a|A]mazon.*|.*AMAZON.*)(=|:)(\s){0,1}(\W?)([A-Z0-9]{20})(\W?)'
@@ -22,6 +11,8 @@ regexp_list[Secret_URLs]='http(.?)://((api).(.*).(.*){1,256})'
 #regexp_list[Email_address]='(.*)([A-Za-z0-9_\.\-]{1,256}@[A-Za-z0-9\.\-]{1,256}.[A-Za-z0-9\.]{2,6})'
 
 
+#ROOT_DIR="../../test"
+ROOT_DIR="../../deployment-configuration"
  
 # Redirect output to stderr.
 exec 1>&2
@@ -30,24 +21,13 @@ exec 1>&2
 for i in "${!regexp_list[@]}"
 do
  ## Check changed files
- KEY=$(git diff --cached --name-only -z $against | xargs -0 cat | grep -c -E ${regexp_list[$i]})
+ #KEY=$(grep -r -c -E ${regexp_list[$i]} ${ROOT_DIR}/*)
 
- if [ $KEY -ne 0 ]; then
-  echo "Found patterns for ${i}"
-  echo "Please check your code"
-  ((vulnerabilities++))
- else
-  echo "Patterns for ${i} are not found"
- fi
+ #if [ $KEY -ne 0 ]; then
+ # echo "Found patterns for ${i} - " $(grep -r -E ${regexp_list[$i]} ${ROOT_DIR}/*)
+ #fi
+ echo "Patterns for ${i}:"
+ grep -r -E -nHo ${regexp_list[$i]} ${ROOT_DIR}/*
 done
 
-echo "Number of vulnerabilities :  $vulnerabilities"
- 
-if [ $vulnerabilities -ne 0 ]; then
-    echo "Commit is rejected."
-    exit 1
-fi
- 
-# Normal exit
-exit 0
 

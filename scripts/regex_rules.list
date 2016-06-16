@@ -1,7 +1,9 @@
 [REGEXP]
 AWS_AccessKey:[A-Z0-9]{20}
 AWS_SecretKey:[A-Za-z0-9/+=]{40}
-Password:(.*)([p|P][a|A][s|S][s|S][w|W][o|O][r|R][d|D])([^*|false|true].*){5,256}
-Secret_URLs:http(.?)://((api).(.*).(.*){1,256})
-Email_address:(.*)([A-Za-z0-9_\.\-]{1,256}@[A-Za-z0-9\.\-]{1,256}.[A-Za-z0-9\.]{2,6})
+#Password:(.*)([p|P][a|A][s|S][s|S][w|W][o|O][r|R][d|D])([^*|false|true].*){5,256}
+#Secret_URLs:http(.?)://((api).(.*).(.*){1,256})
+#Email_address:(.*)([A-Za-z0-9_\.\-]{1,256}@[A-Za-z0-9\.\-]{1,256}.[A-Za-z0-9\.]{2,6})
+#Email_address:(.*)([A-Za-z0-9_\.\-]{1,256}@[A-Za-z0-9\.\-]{1,256}.[A-Za-z]{2,6})
+#Email_address:(.*)([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})
 
