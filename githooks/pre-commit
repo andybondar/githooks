@@ -17,9 +17,13 @@ vulnerabilities=0
 declare -A regexp_list
 regexp_list[AWS_Access_Key]='(.*[a|A]ws.*|.*AWS.*|.*[a|A]mazon.*|.*AMAZON.*)(=|:)(\s){0,1}(\W?)([A-Z0-9]{20})(\W?)'
 regexp_list[AWS_Secret_Key]='(.*aws.*|.*AWS.*|.*amazon.*|.*AMAZON.*)(=|:)(\s){0,1}(\W?)([A-Za-z0-9/+=]{40})(\W?)'
-#regexp_list[Password]='(.*)([p|P][a|A][s|S][s|S][w|W][o|O][r|R][d|D])(\s){0,1}(:|=){1,2}(\s){0,1}([^*|password|\s].*){5,256}'
+regexp_list[Password]='(.*)([p|P][a|A][s|S][s|S][w|W][o|O][r|R][d|D])(\s){0,1}(:|=){1,2}(\s){0,1}(\W?)([^[:space:]]){5,25}(\W?)'
 regexp_list[Secret_URLs]='http(.?)://((api).(.*).(.*){1,256})'
-#regexp_list[Email_address]='(.*)([A-Za-z0-9_\.\-]{1,256}@[A-Za-z0-9\.\-]{1,256}.[A-Za-z0-9\.]{2,6})'
+# I'm not sure it is necessary to block code containing email address, we need to discuss it
+#regexp_list[Email_address]='(.*[email]?.*)(\W?)(\b[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9.-]+\b)(\W?)'
+#
+
+add_password_regexp='(.*)([p|P][a|A][s|S][s|S][w|W][o|O][r|R][d|D])(\s){0,1}(:|=){1,2}(\s){0,1}(\W?)(.*passwd.*|.*PASSWD.*|.*pass.*|.*PASS.*|.*password.*|.*PASSWORD.*|.*CHANGEIT.*)(\W?)'
 
 
  
@@ -30,10 +34,17 @@ exec 1>&2
 for i in "${!regexp_list[@]}"
 do
  ## Check changed files
- KEY=$(git diff --cached --name-only -z $against | xargs -0 cat | grep -c -E ${regexp_list[$i]})
+ echo "Searching patterns for ${i}..."
+ if [ "$i" = "Password" ]; then
+  KEY=$(git diff --cached --name-only -z $against | xargs -0 cat | grep -E -x ${regexp_list[$i]} | grep -v -E -x $add_password_regexp | wc -l )
+  git diff --cached --name-only -z $against | xargs -0 cat | grep -E -x ${regexp_list[$i]} | grep -v -E -x $add_password_regexp
+ else
+  KEY=$(git diff --cached --name-only -z $against | xargs -0 cat | grep -E -x ${regexp_list[$i]} | wc -l)
+  git diff --cached --name-only -z $against | xargs -0 cat | grep -E -x ${regexp_list[$i]}
+ fi
 
  if [ $KEY -ne 0 ]; then
-  echo "Found patterns for ${i}"
+  echo "Found ${KEY} patterns for ${i}"
   echo "Please check your code"
   ((vulnerabilities++))
  else
