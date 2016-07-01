@@ -29,8 +29,10 @@ do
   grep -r -E -x -nHo ${regexp_list[$i]} ${ROOT_DIR}/* | grep -v -E -x $add_password_regexp
   echo "${pw} password(s) could be real"
  else
+  patterns=$(grep -r -E -x -nHo ${regexp_list[$i]} ${ROOT_DIR}/* | wc -l)
   echo "Patterns for ${i}:"
   grep -r -E -x -nHo ${regexp_list[$i]} ${ROOT_DIR}/*
+  echo "${patterns} pattterns found"
  fi
 done
 
